@@ -51,12 +51,6 @@
 | `markdownEditorXlx.dimHeadingHashes` | `false` | 把标题行开头的 `#` 淡化显示 |
 | `markdownEditorXlx.trace` | `false` | 输出详细日志到「Markdown XLX」输出通道 |
 
-## 折叠时能隐藏 `#` 号吗？
-
-不能。扩展 API 只提供 `FoldingRange(start, end, kind)`，折叠后行内显示的占位文本（如 `## 标题`）
-由编辑器内部渲染，用于定制的 `collapseText` 并未公开。近似方案是把 `#` 淡化：
-`markdownEditorXlx.dimHeadingHashes: true`（占位宽度不变，只是变灰）。
-
 ## 相关链接
 
 - 源码仓库：<https://github.com/xiao-linxin/vscode-markdown-editor-xlx>
