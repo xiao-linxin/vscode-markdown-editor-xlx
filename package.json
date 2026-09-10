@@ -1,0 +1,209 @@
+{
+  "name": "markdown-editor-xlx",
+  "displayName": "Markdown Editor XLX",
+  "description": "Markdown 标题折叠增强：左侧折叠箭头、折叠到第 N 层、折叠状态持久化",
+  "version": "1.0.1",
+  "publisher": "xiaolinxin",
+  "license": "MIT",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiao-linxin/markdown-editor-xlx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xiao-linxin/markdown-editor-xlx/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "fold",
+    "folding",
+    "heading",
+    "outline"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage:markdown",
+    "onLanguage:mdc"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "markdownEditorXlx.foldToLevel",
+        "title": "Markdown XLX: 折叠到第 N 层…",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.foldToLevel1",
+        "title": "Markdown XLX: 折叠到第 1 层（只展开 h1）",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.foldToLevel2",
+        "title": "Markdown XLX: 折叠到第 2 层（只展开 h1~h2）",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.foldToLevel3",
+        "title": "Markdown XLX: 折叠到第 3 层（只展开 h1~h3）",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.foldCurrentSection",
+        "title": "Markdown XLX: 折叠当前章节",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.unfoldCurrentSection",
+        "title": "Markdown XLX: 展开当前章节",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.foldAllHeadings",
+        "title": "Markdown XLX: 折叠全部标题",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.unfoldAll",
+        "title": "Markdown XLX: 展开全部",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.restoreFolding",
+        "title": "Markdown XLX: 恢复上次折叠状态",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.clearFolding",
+        "title": "Markdown XLX: 清除本文件的折叠记忆",
+        "category": "Markdown XLX"
+      },
+      {
+        "command": "markdownEditorXlx.diagnose",
+        "title": "Markdown XLX: 诊断折叠（输出日志）",
+        "category": "Markdown XLX"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "markdownEditorXlx.foldToLevel1",
+        "key": "ctrl+alt+1",
+        "mac": "cmd+alt+1",
+        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
+      },
+      {
+        "command": "markdownEditorXlx.foldToLevel2",
+        "key": "ctrl+alt+2",
+        "mac": "cmd+alt+2",
+        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
+      },
+      {
+        "command": "markdownEditorXlx.foldToLevel3",
+        "key": "ctrl+alt+3",
+        "mac": "cmd+alt+3",
+        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
+      },
+      {
+        "command": "markdownEditorXlx.foldCurrentSection",
+        "key": "ctrl+alt+[",
+        "mac": "cmd+alt+[",
+        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
+      },
+      {
+        "command": "markdownEditorXlx.unfoldCurrentSection",
+        "key": "ctrl+alt+]",
+        "mac": "cmd+alt+]",
+        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "markdownEditorXlx.foldToLevel",
+          "when": "editorLangId =~ /^(markdown|mdx|mdc)$/",
+          "group": "markdownXlx@1"
+        },
+        {
+          "command": "markdownEditorXlx.foldCurrentSection",
+          "when": "editorLangId =~ /^(markdown|mdx|mdc)$/",
+          "group": "markdownXlx@2"
+        },
+        {
+          "command": "markdownEditorXlx.unfoldCurrentSection",
+          "when": "editorLangId =~ /^(markdown|mdx|mdc)$/",
+          "group": "markdownXlx@3"
+        },
+        {
+          "command": "markdownEditorXlx.foldAllHeadings",
+          "when": "editorLangId =~ /^(markdown|mdx|mdc)$/",
+          "group": "markdownXlx@4"
+        },
+        {
+          "command": "markdownEditorXlx.unfoldAll",
+          "when": "editorLangId =~ /^(markdown|mdx|mdc)$/",
+          "group": "markdownXlx@5"
+        },
+        {
+          "command": "markdownEditorXlx.restoreFolding",
+          "when": "editorLangId =~ /^(markdown|mdx|mdc)$/",
+          "group": "markdownXlx@6"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Markdown Editor XLX",
+      "properties": {
+        "markdownEditorXlx.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "启用本扩展的 Markdown 标题折叠（接管内置折叠规则）。关闭后回退到内置行为。"
+        },
+        "markdownEditorXlx.maxHeadingLevel": {
+          "type": "number",
+          "default": 6,
+          "minimum": 1,
+          "maximum": 6,
+          "description": "生成折叠范围的标题最大层级。例如设为 3 时，h4~h6 不产生折叠箭头。"
+        },
+        "markdownEditorXlx.foldRegionMarkers": {
+          "type": "boolean",
+          "default": true,
+          "description": "支持 <!-- #region --> / <!-- #endregion --> 手动折叠标记。"
+        },
+        "markdownEditorXlx.persistFolding": {
+          "type": "boolean",
+          "default": true,
+          "description": "按文件记住折叠状态，关闭文件或重启后自动恢复。"
+        },
+        "markdownEditorXlx.dimHeadingHashes": {
+          "type": "boolean",
+          "default": false,
+          "description": "把标题开头的 # 号淡化显示（VS Code 扩展 API 无法在折叠占位里隐藏 # 号，此为该需求的近似替代）。"
+        },
+        "markdownEditorXlx.autoRevealOnOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "打开 Markdown 文件时自动恢复上次保存的折叠状态。"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vsix": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.1",
+    "typescript": "^5.4.5"
+  }
+}
