@@ -37,22 +37,28 @@ export type Logger = (message: string) => void;
  * 折叠范围不会被采用。本实现是内置行为的超集：标题层级 + #region + 忽略代码块/front matter。
  */
 export class MarkdownHeadingFoldingProvider implements vscode.FoldingRangeProvider {
-	private cache?: { version: number; scan: ScanResult };
+	/**
+	 * 缓存键必须是 `文件 + 版本`：只按 `document.version` 比对会串文档 ——
+	 * 新打开的文档 version 也从 1 开始，会命中上一个文档的缓存，
+	 * 导致把 A 文件的折叠范围当成 B 文件的返回（表现为箭头出现在莫名的行、该折叠的行反而没有）。
+	 */
+	private cache?: { key: string; scan: ScanResult };
 
 	constructor(
 		private readonly config: () => FoldingConfig,
 		private readonly log?: Logger
 	) {}
 
-	/** 按文档版本缓存，避免每次重算折叠模型都重新扫全文 */
+	/** 按「文档 URI + 版本」缓存，避免每次重算折叠模型都重新扫全文 */
 	public scan(document: vscode.TextDocument): ScanResult {
-		if (this.cache && this.cache.version === document.version) {
+		const key = `${document.uri.toString()}#${document.version}`;
+		if (this.cache && this.cache.key === key) {
 			return this.cache.scan;
 		}
 		const scan = scanDocument(document.getText(), {
 			regionMarkers: this.config().regionMarkers,
 		});
-		this.cache = { version: document.version, scan };
+		this.cache = { key, scan };
 		return scan;
 	}
 

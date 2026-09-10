@@ -2,7 +2,7 @@
   "name": "markdown-editor-xlx",
   "displayName": "Markdown Editor XLX",
   "description": "Markdown 标题折叠增强：左侧折叠箭头、折叠到第 N 层、折叠状态持久化",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "publisher": "xiaolinxin",
   "license": "MIT",
   "icon": "icon.png",
@@ -173,5 +173,9 @@
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^3.2.1",
     "typescript": "^5.4.5"
-  }
+  },
+  "extensionKind": [
+    "workspace",
+    "ui"
+  ]
 }

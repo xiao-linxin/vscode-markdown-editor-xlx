@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as os from 'os';
 import * as vscode from 'vscode';
 import { FoldingMemory } from './foldingMemory';
 import {
@@ -9,6 +11,9 @@ import {
 } from './foldingProvider';
 import { computeSections, findSectionAtLine } from './headings';
 import { HeadingHashDimming } from './hashDimming';
+
+/** 诊断命令的输出落盘位置（只在用户显式执行诊断命令时写入，不常驻） */
+const DIAG_FILE = `${os.tmpdir()}/xlx-diag.log`;
 
 let memory: FoldingMemory | undefined;
 
@@ -132,56 +137,78 @@ export function activate(context: vscode.ExtensionContext): void {
 			run('diagnose', async () => {
 				const editor = vscode.window.activeTextEditor;
 				channel.show(true);
-				channel.appendLine('======= Markdown XLX 诊断 =======');
+				const out: string[] = [];
+				const emit = (line: string): void => {
+					out.push(line);
+					channel.appendLine(line);
+				};
+				emit('======= Markdown XLX 诊断 =======');
 				if (!editor) {
-					channel.appendLine('没有活动编辑器。');
+					emit('没有活动编辑器。');
+					writeDiag(out);
 					return;
 				}
 				const document = editor.document;
 				const config = readConfig();
 				const editorConfig = vscode.workspace.getConfiguration('editor');
-				channel.appendLine(`文件        : ${document.uri.toString()}`);
-				channel.appendLine(`languageId  : ${document.languageId}`);
-				channel.appendLine(`行数 / 版本 : ${document.lineCount} / ${document.version}`);
-				channel.appendLine(
-					`编辑器配置  : folding=${editorConfig.get('folding')}` +
-						` foldingStrategy=${editorConfig.get('foldingStrategy')}` +
-						` showFoldingControls=${editorConfig.get('showFoldingControls')}`
-				);
-				channel.appendLine(
-					`默认折叠 provider: ${JSON.stringify(
-						editorConfig.get('defaultFoldingRangeProvider')
-					)}`
-				);
-				channel.appendLine(
-					`本扩展配置  : enabled=${config.enabled} maxHeadingLevel=${config.maxHeadingLevel}`
-				);
+				const scan = provider.scan(document);
 				const mine = provider.provideFoldingRanges(
 					document,
 					{ lineCount: document.lineCount },
 					new vscode.CancellationTokenSource().token
 				);
-				channel.appendLine(
-					`本扩展范围  : ${mine.length} 个 → ` +
-						mine.map((r) => `${r.start + 1}-${r.end + 1}`).join(', ')
-				);
+				let actual: vscode.FoldingRange[] | undefined;
 				try {
-					const actual = await vscode.commands.executeCommand<vscode.FoldingRange[]>(
+					actual = await vscode.commands.executeCommand<vscode.FoldingRange[]>(
 						'vscode.executeFoldingRangeProvider',
 						document.uri
 					);
-					channel.appendLine(
-						`编辑器实际采用: ${actual ? `${actual.length} 个` : 'undefined（没有任何 provider 返回）'}`
-					);
-					if (actual) {
-						channel.appendLine(
-							`  → ${actual.map((r) => `${r.start + 1}-${r.end + 1}`).join(', ')}`
-						);
-					}
 				} catch (error) {
-					channel.appendLine(`调用 vscode.executeFoldingRangeProvider 失败: ${String(error)}`);
+					emit(`调用 vscode.executeFoldingRangeProvider 失败: ${String(error)}`);
 				}
-				channel.appendLine('======= 诊断结束 =======');
+				emit(`扩展版本      : ${version}`);
+				emit(`文件          : ${document.uri.toString()}`);
+				emit(`languageId    : ${document.languageId} | 行数 ${document.lineCount} | version ${document.version}`);
+				emit(
+					`编辑器配置    : folding=${editorConfig.get('folding')}` +
+						` foldingStrategy=${editorConfig.get('foldingStrategy')}` +
+						` showFoldingControls=${editorConfig.get('showFoldingControls')}`
+				);
+				emit(
+					`默认折叠 provider: ${JSON.stringify(editorConfig.get('defaultFoldingRangeProvider'))}`
+				);
+				emit(
+					`本扩展配置    : enabled=${config.enabled} maxHeadingLevel=${config.maxHeadingLevel}`
+				);
+				emit(
+					`本扩展范围    : ${mine.length} 个 → ` +
+						mine.map((r) => `${r.start + 1}-${r.end + 1}`).join(', ')
+				);
+				emit(
+					`编辑器实际采用: ${
+						actual
+							? `${actual.length} 个 → ${actual
+									.map((r) => `${r.start + 1}-${r.end + 1}`)
+									.join(', ')}`
+							: 'undefined（没有任何 provider 返回）'
+					}`
+				);
+				emit(
+					`visibleRanges : ${
+						editor.visibleRanges.map((r) => `L${r.start.line + 1}-L${r.end.line + 1}`).join(', ') ||
+						'(空)'
+					}`
+				);
+				emit(
+					`扫描到的标题  : ${scan.headings.length} 个 → ` +
+						scan.headings
+							.slice(0, 30)
+							.map((h) => `L${h.line + 1}h${h.level}`)
+							.join(' ')
+				);
+				emit('======= 诊断结束 =======');
+				writeDiag(out);
+				channel.appendLine(`（诊断详情已落盘：${DIAG_FILE}）`);
 			})
 		),
 
@@ -375,4 +402,13 @@ async function foldAllHeadings(provider: MarkdownHeadingFoldingProvider): Promis
 	);
 	await foldLines(sections.map((section) => section.startLine));
 	memory?.remember(editor.document, sections.map((section) => headingKey(section.heading)));
+}
+
+/** 诊断信息落盘（仅用户显式执行诊断命令时调用） */
+function writeDiag(lines: string[]): void {
+	try {
+		fs.writeFileSync(DIAG_FILE, `${new Date().toISOString()}\n${lines.join('\n')}\n`);
+	} catch {
+		// 写不进去不影响功能
+	}
 }
