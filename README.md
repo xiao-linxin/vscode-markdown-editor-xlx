@@ -9,7 +9,6 @@
 | --- | --- |
 | VS Code 官方市场 | 扩展面板搜 `xiaolinxin.markdown-editor-xlx` · <https://marketplace.visualstudio.com/items?itemName=xiaolinxin.markdown-editor-xlx> |
 | Open VSX（CodeBuddy / VSCodium 等） | 扩展面板搜 `markdown-editor-xlx` · <https://open-vsx.org/extension/xiaolinxin/markdown-editor-xlx> |
-| 离线 VSIX | 下载 `.vsix` → 扩展面板 `...` → 「从 VSIX 安装」；Remote 场景需装到**服务端** |
 
 ## 功能
 
@@ -57,31 +56,6 @@
 不能。扩展 API 只提供 `FoldingRange(start, end, kind)`，折叠后行内显示的占位文本（如 `## 标题`）
 由编辑器内部渲染，用于定制的 `collapseText` 并未公开。近似方案是把 `#` 淡化：
 `markdownEditorXlx.dimHeadingHashes: true`（占位宽度不变，只是变灰）。
-
-## 开发与打包
-
-```bash
-npm install
-npm run compile        # 编译到 out/
-npm run vsix           # 生成 markdown-editor-xlx-<version>.vsix
-```
-
-离线安装：把生成的 `.vsix` 拷到目标机器，扩展面板右上角 `...` → 「从 VSIX 安装」，
-或 `code --install-extension markdown-editor-xlx-<version>.vsix`。
-
-发版命令：
-
-```bash
-npx vsce publish -i markdown-editor-xlx-<version>.vsix -p <VS_CODE_MARKETPLACE_PAT>
-npx ovsx  publish markdown-editor-xlx-<version>.vsix -p <OPEN_VSX_TOKEN>
-```
-
-## 实现说明
-
-- 注册 `FoldingRangeProvider` 会**接管**该语言的折叠范围计算；本扩展按「语言 id
-  （markdown / mdx / mdc）+ 文件名 glob」双条件注册，避免 languageId 被其他扩展改写后失效。
-- 折叠状态无法通过 API 读取，扩展用 `editor.visibleRanges` 反推哪些章节被折叠，
-  并按「标题层级:标题文本」而不是行号保存，从而在文件被编辑后仍能恢复。
 
 ## 相关链接
 
