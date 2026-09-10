@@ -83,8 +83,8 @@ npx ovsx  publish markdown-editor-xlx-<version>.vsix -p <OPEN_VSX_TOKEN>
 
 ## 相关链接
 
-- 源码仓库：<https://github.com/xiao-linxin/markdown-editor-xlx>
-- 问题反馈：<https://github.com/xiao-linxin/markdown-editor-xlx/issues>
+- 源码仓库：<https://github.com/xiao-linxin/vscode-markdown-editor-xlx>
+- 问题反馈：<https://github.com/xiao-linxin/vscode-markdown-editor-xlx/issues>
 
 ## License
 

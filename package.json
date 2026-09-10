@@ -8,10 +8,10 @@
   "icon": "icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xiao-linxin/markdown-editor-xlx.git"
+    "url": "https://github.com/xiao-linxin/vscode-markdown-editor-xlx.git"
   },
   "bugs": {
-    "url": "https://github.com/xiao-linxin/markdown-editor-xlx/issues"
+    "url": "https://github.com/xiao-linxin/vscode-markdown-editor-xlx/issues"
   },
   "engines": {
     "vscode": "^1.85.0"

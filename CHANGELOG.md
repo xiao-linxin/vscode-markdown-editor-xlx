@@ -4,6 +4,7 @@
 
 - 补充 `repository` / `bugs` 字段，指向 GitHub 源码仓库
 - README 增加安装渠道（VS Code 市场 / Open VSX / 离线 VSIX）与语言兼容说明
+- 移除写 `/tmp` 的临时排查日志，统一走「Markdown XLX」输出通道（`LogOutputChannel`）
 
 ## 1.0.0
 

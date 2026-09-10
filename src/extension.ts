@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as vscode from 'vscode';
 import { FoldingMemory } from './foldingMemory';
 import {
@@ -11,35 +10,13 @@ import {
 import { computeSections, findSectionAtLine } from './headings';
 import { HeadingHashDimming } from './hashDimming';
 
-/**
- * 排查用的落盘日志。扩展宿主跑在远端，写文件是唯一不依赖 UI 就能确认
- * 「扩展有没有激活 / provider 有没有被调用」的手段。
- */
-const FILE_LOG = '/tmp/xlx-md-fold.log';
-const fileLogCounts = new Map<string, number>();
-
-function fileLog(message: string, limit = 30): void {
-	try {
-		const key = message.slice(0, 32);
-		const count = fileLogCounts.get(key) ?? 0;
-		if (count >= limit) {
-			return;
-		}
-		fileLogCounts.set(key, count + 1);
-		fs.appendFileSync(FILE_LOG, `[${new Date().toISOString()}] ${message}\n`);
-	} catch {
-		// 写不进去就算了，不影响功能
-	}
-}
-
 let memory: FoldingMemory | undefined;
 
 export function activate(context: vscode.ExtensionContext): void {
-	// log: true 让内容同时落盘到 <logs>/output_logging_*/N-Markdown XLX.log
+	// log: true ⇒ 内容同时落盘到 <logs>/output_logging_*/N-Markdown XLX.log
 	const channel = vscode.window.createOutputChannel('Markdown XLX', { log: true });
 	let unconditionalLogs = 3;
 	const log = (message: string): void => {
-		fileLog(message, 20);
 		if (readConfig().trace || unconditionalLogs > 0) {
 			unconditionalLogs--;
 			channel.appendLine(`[${new Date().toLocaleTimeString()}] ${message}`);
@@ -47,13 +24,12 @@ export function activate(context: vscode.ExtensionContext): void {
 	};
 
 	const version = (context.extension.packageJSON?.version as string) ?? '0.0.0';
-	fileLog(
-		`activate v${version} | app=${vscode.env.appName} | remote=${vscode.env.remoteName ?? '-'}` +
-			` | extPath=${context.extensionUri.path}`
+	channel.appendLine(
+		`Markdown XLX v${version} 已激活（语言：markdown / mdx / mdc）。` +
+			`详细日志请设置 "markdownEditorXlx.trace": true`
 	);
 	channel.appendLine(
-		`Markdown XLX v${version} 已激活（选择器：markdown/mdx）。` +
-			`详细日志请设置 "markdownEditorXlx.trace": true`
+		`运行环境：app=${vscode.env.appName} remote=${vscode.env.remoteName ?? '-'}`
 	);
 	void vscode.window.setStatusBarMessage(`$(check) Markdown XLX v${version} 已激活`, 8000);
 
