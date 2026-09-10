@@ -2,7 +2,7 @@
   "name": "markdown-editor-xlx",
   "displayName": "Markdown Editor XLX",
   "description": "Markdown 标题折叠增强：左侧折叠箭头、折叠到第 N 层、折叠状态持久化",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "xiaolinxin",
   "license": "MIT",
   "icon": "icon.png",
@@ -91,38 +91,6 @@
         "category": "Markdown XLX"
       }
     ],
-    "keybindings": [
-      {
-        "command": "markdownEditorXlx.foldToLevel1",
-        "key": "ctrl+alt+1",
-        "mac": "cmd+alt+1",
-        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
-      },
-      {
-        "command": "markdownEditorXlx.foldToLevel2",
-        "key": "ctrl+alt+2",
-        "mac": "cmd+alt+2",
-        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
-      },
-      {
-        "command": "markdownEditorXlx.foldToLevel3",
-        "key": "ctrl+alt+3",
-        "mac": "cmd+alt+3",
-        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
-      },
-      {
-        "command": "markdownEditorXlx.foldCurrentSection",
-        "key": "ctrl+alt+[",
-        "mac": "cmd+alt+[",
-        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
-      },
-      {
-        "command": "markdownEditorXlx.unfoldCurrentSection",
-        "key": "ctrl+alt+]",
-        "mac": "cmd+alt+]",
-        "when": "editorTextFocus && editorLangId =~ /^(markdown|mdx|mdc)$/"
-      }
-    ],
     "menus": {
       "editor/context": [
         {
@@ -179,8 +147,8 @@
         },
         "markdownEditorXlx.persistFolding": {
           "type": "boolean",
-          "default": true,
-          "description": "按文件记住折叠状态，关闭文件或重启后自动恢复。"
+          "default": false,
+          "description": "按文件记住折叠状态（关闭文件或重启后可手动恢复）。默认关闭：VS Code 原生已会恢复编辑器视图状态（含折叠），一般无需本功能。"
         },
         "markdownEditorXlx.dimHeadingHashes": {
           "type": "boolean",
@@ -189,8 +157,8 @@
         },
         "markdownEditorXlx.autoRevealOnOpen": {
           "type": "boolean",
-          "default": true,
-          "description": "打开 Markdown 文件时自动恢复上次保存的折叠状态。"
+          "default": false,
+          "description": "打开文件时自动恢复本扩展记录的折叠状态。默认关闭，避免与 VS Code 原生的视图状态恢复相互干扰。"
         }
       }
     }

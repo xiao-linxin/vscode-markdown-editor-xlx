@@ -17,8 +17,10 @@ export function readConfig(): FoldingConfig {
 		enabled: config.get<boolean>('enabled', true),
 		maxHeadingLevel: config.get<number>('maxHeadingLevel', 6),
 		regionMarkers: config.get<boolean>('foldRegionMarkers', true),
-		persistFolding: config.get<boolean>('persistFolding', true),
-		autoRevealOnOpen: config.get<boolean>('autoRevealOnOpen', true),
+		// 折叠状态持久化默认关闭：VS Code 原生就会恢复编辑器视图状态（含折叠），
+		// 自己再实现一遍是重复造轮子，还容易与原生互相干扰。
+		persistFolding: config.get<boolean>('persistFolding', false),
+		autoRevealOnOpen: config.get<boolean>('autoRevealOnOpen', false),
 		dimHeadingHashes: config.get<boolean>('dimHeadingHashes', false),
 		trace: config.get<boolean>('trace', false),
 	};

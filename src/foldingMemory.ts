@@ -71,9 +71,18 @@ export class FoldingMemory {
 		this.remember(document, Array.from(folded));
 	}
 
-	/** 手动折叠路径：从可见范围反推当前折叠状态 */
+	/**
+	 * 手动折叠路径：从可见范围反推当前折叠状态。
+	 *
+	 * 反推不出来时（视口内看不到被隐藏的行，无法区分"折叠"与"只是滚到了别处"）直接返回，
+	 * **绝不覆盖已有记忆** —— 否则会把命令路径显式写入的折叠状态抹成空。
+	 */
 	public record(editor: vscode.TextEditor, scan: ScanResult, maxLevel: number): void {
-		this.remember(editor.document, detectFoldedKeys(editor, scan, maxLevel));
+		const folded = detectFoldedKeys(editor, scan, maxLevel);
+		if (folded === null) {
+			return;
+		}
+		this.remember(editor.document, folded);
 	}
 
 	/** 把记忆换算成待恢复的折叠起始行号 */
@@ -143,10 +152,11 @@ function detectFoldedKeys(
 	editor: vscode.TextEditor,
 	scan: ScanResult,
 	maxLevel: number
-): string[] {
+): string[] | null {
 	const visible = editor.visibleRanges;
-	if (!visible.length) {
-		return [];
+	// 视口内只有一个连续区间时，看不到"被折叠隐藏的行"，无法区分折叠与滚动 → 不作判断
+	if (visible.length < 2) {
+		return null;
 	}
 	// 视口底部的最后一行无法判断是否折叠（可能只是滚动到了边缘）
 	const viewportBottom = visible[visible.length - 1].end.line;
