@@ -8,6 +8,7 @@ export interface FoldingConfig {
 	persistFolding: boolean;
 	autoRevealOnOpen: boolean;
 	dimHeadingHashes: boolean;
+	trimTrailingBlankLines: boolean;
 	trace: boolean;
 }
 
@@ -22,6 +23,8 @@ export function readConfig(): FoldingConfig {
 		persistFolding: config.get<boolean>('persistFolding', false),
 		autoRevealOnOpen: config.get<boolean>('autoRevealOnOpen', false),
 		dimHeadingHashes: config.get<boolean>('dimHeadingHashes', false),
+		// 折叠范围默认剔除章节末尾的空行，让空行在折叠后仍可见（章节之间留出间隔）
+		trimTrailingBlankLines: config.get<boolean>('trimTrailingBlankLines', true),
 		trace: config.get<boolean>('trace', false),
 	};
 }
@@ -76,7 +79,8 @@ export class MarkdownHeadingFoldingProvider implements vscode.FoldingRangeProvid
 		const maxLevel = this.config().maxHeadingLevel;
 
 		const ranges: vscode.FoldingRange[] = [];
-		for (const section of computeSections(scan.headings, lineCount, maxLevel)) {
+		const lines = this.config().trimTrailingBlankLines ? scan.lines : undefined;
+		for (const section of computeSections(scan.headings, lineCount, maxLevel, lines)) {
 			ranges.push(new vscode.FoldingRange(section.startLine, section.endLine));
 		}
 		if (this.config().regionMarkers) {

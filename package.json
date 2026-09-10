@@ -2,7 +2,7 @@
   "name": "markdown-editor-xlx",
   "displayName": "Markdown Editor XLX",
   "description": "Markdown 标题折叠增强：左侧折叠箭头、折叠到第 N 层、折叠状态持久化",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "publisher": "xiaolinxin",
   "license": "MIT",
   "icon": "icon.png",
@@ -144,6 +144,11 @@
           "type": "boolean",
           "default": true,
           "description": "支持 <!-- #region --> / <!-- #endregion --> 手动折叠标记。"
+        },
+        "markdownEditorXlx.trimTrailingBlankLines": {
+          "type": "boolean",
+          "default": true,
+          "description": "折叠范围不包含章节末尾的空行，使这些空行在折叠后仍然可见（相邻章节之间留出间隔）。关闭后末行空行会一起被收起。"
         },
         "markdownEditorXlx.persistFolding": {
           "type": "boolean",

@@ -30,6 +30,8 @@ export interface FoldRegion {
 export interface ScanResult {
 	headings: Heading[];
 	regions: FoldRegion[];
+	/** 原始行内容（与 splitLines 结果对齐），折叠范围裁剪末尾空行时需要 */
+	lines: string[];
 }
 
 export interface ScanOptions {
@@ -143,7 +145,12 @@ export function scanDocument(text: string, options: ScanOptions): ScanResult {
 		}
 	}
 
-	return { headings, regions };
+	return { headings, regions, lines };
+}
+
+/** 空行（含只有空格 / 制表符的行） */
+export function isBlankLine(line: string | undefined): boolean {
+	return line === undefined || line.trim() === '';
 }
 
 function isSetextTitleCandidate(line: string): boolean {
@@ -171,6 +178,10 @@ function normalizeHeadingText(raw: string): string {
 /**
  * 计算每个标题的章节范围，语义与编辑器折叠一致：
  * 章节从标题行开始，到「下一个层级 <= 当前层级」的标题行的前一行结束。
+ *
+ * 传入 `lines`（原始行内容）时，会把章节末尾的**空行**从折叠范围里剔除 ——
+ * 于是折叠后这些空行仍然可见，充当相邻章节之间的视觉间隔。
+ * 注意只剔除空行，`---` 分隔线、正文等照常被收起。
  */
 export interface HeadingSection {
 	heading: Heading;
@@ -181,7 +192,8 @@ export interface HeadingSection {
 export function computeSections(
 	headings: Heading[],
 	lineCount: number,
-	maxLevel: number
+	maxLevel: number,
+	lines?: string[]
 ): HeadingSection[] {
 	const sections: HeadingSection[] = [];
 	for (let i = 0; i < headings.length; i++) {
@@ -196,11 +208,28 @@ export function computeSections(
 				break;
 			}
 		}
+		endLine = trimTrailingBlankLines(endLine, heading.line, lines);
 		if (endLine > heading.line) {
 			sections.push({ heading, startLine: heading.line, endLine });
 		}
 	}
 	return sections;
+}
+
+/** 从 endLine 往回跳过末尾的空行；若整节只剩标题行，则返回标题行（该节不产生折叠范围） */
+function trimTrailingBlankLines(
+	endLine: number,
+	startLine: number,
+	lines: string[] | undefined
+): number {
+	if (!lines) {
+		return endLine;
+	}
+	let end = Math.min(endLine, lines.length - 1);
+	while (end > startLine && isBlankLine(lines[end])) {
+		end--;
+	}
+	return end;
 }
 
 /** 找到光标所在章节（光标行之前、层级最深的那个标题） */

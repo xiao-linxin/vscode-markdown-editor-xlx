@@ -347,10 +347,12 @@ async function foldToLevel(
 		return;
 	}
 	const config = readConfig();
+	const scan = provider.scan(editor.document);
 	const sections = computeSections(
-		provider.scan(editor.document).headings,
+		scan.headings,
 		editor.document.lineCount,
-		config.maxHeadingLevel
+		config.maxHeadingLevel,
+		config.trimTrailingBlankLines ? scan.lines : undefined
 	);
 	await vscode.commands.executeCommand('editor.unfoldAll');
 	const toFold = sections.filter((section) => section.heading.level > level);
@@ -395,10 +397,12 @@ async function foldAllHeadings(provider: MarkdownHeadingFoldingProvider): Promis
 		return;
 	}
 	const config = readConfig();
+	const scan = provider.scan(editor.document);
 	const sections = computeSections(
-		provider.scan(editor.document).headings,
+		scan.headings,
 		editor.document.lineCount,
-		config.maxHeadingLevel
+		config.maxHeadingLevel,
+		config.trimTrailingBlankLines ? scan.lines : undefined
 	);
 	await foldLines(sections.map((section) => section.startLine));
 	memory?.remember(editor.document, sections.map((section) => headingKey(section.heading)));

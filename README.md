@@ -3,6 +3,8 @@
 给 Markdown 文本编辑区做「按标题章节折叠」的增强扩展：标题行左侧出现折叠箭头，
 支持一键折叠到第 N 层、按文件记住折叠状态。
 
+解决 **CodeBuddy 编辑器没有章节级折叠**的问题。
+
 ## 安装
 
 | 渠道 | 方式 |
@@ -15,6 +17,7 @@
 - **按标题折叠**：h1~h6 标题行左侧出现折叠箭头，折叠后收起该标题下的正文与子标题
   - 正确跳过 fenced 代码块、YAML/TOML front matter、HTML 注释、缩进代码块里的 `#`
   - 支持 `===` / `---` 下划线式（Setext）标题
+  - **保留章节末尾空行**：折叠范围到正文最后一行为止，章节结尾的空行仍显示（相邻章节之间留出间隔）
 - **手动折叠标记**：`<!-- #region -->` … `<!-- #endregion -->`
 - **折叠到第 N 层**：一键只展开到 h1 / h1~h2 / h1~h3（走命令面板 / 右键菜单，**默认不绑快捷键**）
 - **折叠 / 展开当前章节**：折叠或展开光标所在章节（同上，**默认不绑快捷键**）
@@ -46,6 +49,7 @@
 | `markdownEditorXlx.enabled` | `true` | 总开关，关闭后回退到内置折叠行为 |
 | `markdownEditorXlx.maxHeadingLevel` | `6` | 生成折叠箭头的最大标题层级，设为 3 则 h4~h6 无箭头 |
 | `markdownEditorXlx.foldRegionMarkers` | `true` | 识别 `<!-- #region -->` / `<!-- #endregion -->` |
+| `markdownEditorXlx.trimTrailingBlankLines` | `true` | 折叠范围不含章节末尾空行，空行折叠后仍可见；关闭后末行空行一并收起 |
 | `markdownEditorXlx.persistFolding` | `false` | 按文件记住折叠状态（VS Code 原生已有视图状态恢复，一般**无需开启**） |
 | `markdownEditorXlx.autoRevealOnOpen` | `false` | 打开文件时自动恢复本扩展记录的折叠状态（默认关闭，避免与原生的视图状态恢复互相干扰） |
 | `markdownEditorXlx.dimHeadingHashes` | `false` | 把标题行开头的 `#` 淡化显示 |
