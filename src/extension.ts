@@ -9,6 +9,7 @@ import {
 	MD_SELECTOR,
 	readConfig,
 } from './foldingProvider';
+import { copyAiReference, readCopyReferenceConfig } from './copyReference';
 import { computeSections, findSectionAtLine } from './headings';
 import { HeadingHashDimming } from './hashDimming';
 
@@ -132,6 +133,11 @@ export function activate(context: vscode.ExtensionContext): void {
 				void vscode.window.showInformationMessage('Markdown XLX：已清除本文件的折叠记忆。');
 			})
 		),
+		vscode.commands.registerCommand(
+			'markdownEditorXlx.copyAiReference',
+			run('copyAiReference', () => copyAiReference(readCopyReferenceConfig(), log))
+		),
+
 		vscode.commands.registerCommand(
 			'markdownEditorXlx.diagnose',
 			run('diagnose', async () => {

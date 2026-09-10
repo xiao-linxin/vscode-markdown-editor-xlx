@@ -1,8 +1,8 @@
 {
   "name": "markdown-editor-xlx",
   "displayName": "Markdown Editor XLX",
-  "description": "Markdown 标题折叠增强：左侧折叠箭头、折叠到第 N 层、折叠状态持久化",
-  "version": "1.0.7",
+  "description": "Markdown 标题折叠增强：左侧折叠箭头、折叠到第 N 层；一键复制 @路径:行号 引用给 AI",
+  "version": "1.1.0",
   "publisher": "xiaolinxin",
   "license": "MIT",
   "icon": "icon.png",
@@ -25,12 +25,16 @@
     "fold",
     "folding",
     "heading",
-    "outline"
+    "outline",
+    "copy",
+    "reference",
+    "ai"
   ],
   "activationEvents": [
     "onStartupFinished",
     "onLanguage:markdown",
-    "onLanguage:mdc"
+    "onLanguage:mdc",
+    "onCommand:markdownEditorXlx.copyAiReference"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -86,9 +90,22 @@
         "category": "Markdown XLX"
       },
       {
+        "command": "markdownEditorXlx.copyAiReference",
+        "title": "Markdown XLX: 复制引用（@路径:行号）",
+        "category": "Markdown XLX"
+      },
+      {
         "command": "markdownEditorXlx.diagnose",
         "title": "Markdown XLX: 诊断折叠（输出日志）",
         "category": "Markdown XLX"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "markdownEditorXlx.copyAiReference",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c",
+        "when": "editorTextFocus"
       }
     ],
     "menus": {
@@ -122,6 +139,11 @@
           "command": "markdownEditorXlx.restoreFolding",
           "when": "editorLangId =~ /^(markdown|mdx|mdc)$/",
           "group": "markdownXlx@6"
+        },
+        {
+          "command": "markdownEditorXlx.copyAiReference",
+          "when": "editorTextFocus",
+          "group": "9_cutcopypaste@10"
         }
       ]
     },
@@ -164,6 +186,21 @@
           "type": "boolean",
           "default": false,
           "description": "打开文件时自动恢复本扩展记录的折叠状态。默认关闭，避免与 VS Code 原生的视图状态恢复相互干扰。"
+        },
+        "markdownEditorXlx.copyReferencePrefix": {
+          "type": "string",
+          "default": "@",
+          "description": "复制引用时的路径前缀字符，如 @ 或 #。"
+        },
+        "markdownEditorXlx.copyReferencePathSeparator": {
+          "type": "string",
+          "default": ":",
+          "description": "复制引用时路径与行号之间的分隔符。"
+        },
+        "markdownEditorXlx.copyReferenceLineSeparator": {
+          "type": "string",
+          "default": "-",
+          "description": "复制引用时行号范围的连接符，如 12-18 里的 -。"
         }
       }
     }

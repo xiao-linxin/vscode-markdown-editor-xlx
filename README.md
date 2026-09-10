@@ -21,6 +21,11 @@
 - **手动折叠标记**：`<!-- #region -->` … `<!-- #endregion -->`
 - **折叠到第 N 层**：一键只展开到 h1 / h1~h2 / h1~h3（走命令面板 / 右键菜单，**默认不绑快捷键**）
 - **折叠 / 展开当前章节**：折叠或展开光标所在章节（同上，**默认不绑快捷键**）
+- **复制 AI 引用**：选中若干行按 `Ctrl+Shift+C`（Mac `Cmd+Shift+C`），把引用复制到剪贴板，粘进 AI 对话即可定位到具体行
+  - 多行：`@相对路径:起始-结束`，例如 `@src/headings.ts:19-22`
+  - 单行 / 未选中：`@相对路径:行号`，例如 `@src/headings.ts:19`
+  - **只写剪贴板，不会自动聚焦或粘贴到任何面板**；对所有文件类型生效，不限于 Markdown
+  - 前缀与分隔符可配置（见下方配置表）
 - **折叠状态持久化**（可选，默认关闭）：按文件记住折叠层级、按标题文本匹配恢复。
   注：VS Code 原生已会恢复编辑器视图状态（含折叠），所以本功能默认关闭；
   确实需要时再打开 `markdownEditorXlx.persistFolding` + `markdownEditorXlx.autoRevealOnOpen`
@@ -32,6 +37,7 @@
 
 | 命令 | 快捷键 |
 | --- | --- |
+| `Markdown XLX: 复制引用（@路径:行号）` | `Ctrl+Shift+C`（Mac: `Cmd+Shift+C`） |
 | `Markdown XLX: 折叠到第 N 层…` | - |
 | `Markdown XLX: 折叠到第 1/2/3 层` | - |
 | `Markdown XLX: 折叠当前章节` | - |
@@ -41,6 +47,8 @@
 | `Markdown XLX: 恢复上次折叠状态` | - |
 | `Markdown XLX: 清除本文件的折叠记忆` | - |
 | `Markdown XLX: 诊断折叠（输出日志）` | - |
+
+> 快捷键可在「键盘快捷方式」中搜索 `Markdown XLX` 自行修改。
 
 ## 配置
 
@@ -53,6 +61,9 @@
 | `markdownEditorXlx.persistFolding` | `false` | 按文件记住折叠状态（VS Code 原生已有视图状态恢复，一般**无需开启**） |
 | `markdownEditorXlx.autoRevealOnOpen` | `false` | 打开文件时自动恢复本扩展记录的折叠状态（默认关闭，避免与原生的视图状态恢复互相干扰） |
 | `markdownEditorXlx.dimHeadingHashes` | `false` | 把标题行开头的 `#` 淡化显示 |
+| `markdownEditorXlx.copyReferencePrefix` | `@` | 复制引用的路径前缀字符，如 `@` 或 `#` |
+| `markdownEditorXlx.copyReferencePathSeparator` | `:` | 复制引用中路径与行号的分隔符 |
+| `markdownEditorXlx.copyReferenceLineSeparator` | `-` | 复制引用中行号范围的连接符，如 `12-18` 里的 `-` |
 | `markdownEditorXlx.trace` | `false` | 输出详细日志到「Markdown XLX」输出通道 |
 
 ## 相关链接
